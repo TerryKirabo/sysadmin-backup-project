@@ -1,0 +1,42 @@
+#!/bin/bash
+
+# ---
+# SCRIPT 1: GENERATE GROUND-TRUTH CHECKSUMS
+# We used this to create our "ground-truth" file for RPO verification.
+# ---
+# cd /home/terry/projectsysadminNAGGINDA
+# find . -type f -exec sha256sum {} + > ground_truth_checksums.txt
+
+
+# ---
+# SCRIPT 2: BASELINE FULL & INCREMENTAL BACKUP
+# This is the single command used for all rsync backups.
+# -a: Archive mode (recursive, preserves permissions, etc.)
+# -v: Verbose (shows file list)
+# ---
+rsync -av /home/terry/projectsysadminNAGGINDA/ /home/terry/BACKUP/
+
+
+# ---
+# SCRIPT 3: DATA CORRUPTION
+# We used the built-in hex editor to modify the file.
+# ---
+# sudo apt install hexedit
+# hexedit /home/terry/projectsysadminNAGGINDA/Photos/"Blue and Yellow Modern Upcoming Events Instagram Post (Flyer) (5).png"
+# (Inside hexedit: PageDown, type '0000', Ctrl+X, 'y' to save)
+
+
+# ---
+# SCRIPT 4: RESTORE FROM DELETION / CORRUPTION
+# This is the single command used to "heal" the source folder from the backup.
+# It automatically detects missing OR changed files and copies the clean version.
+# ---
+rsync -av /home/terry/BACKUP/ /home/terry/projectsysadminNAGGINDA/
+
+
+# ---
+# SCRIPT 5: VERIFYING A RESTORE
+# We ran this *after* a restore to check the file's hash.
+# ---
+# sha256sum /home/terry/projectsysadminNAGGINDA/Photos/"Blue and Yellow Modern Upcoming Events Instagram Post (Flyer) (5).png"
+# Result (Both Tests): fe4d8905c74cc02738fee51fc0385ca71d5aa3d625dbe910d1f57ba52909c114 (SUCCESS)

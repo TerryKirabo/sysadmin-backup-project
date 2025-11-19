@@ -1,0 +1,137 @@
+Project Log: A Sysadmin's Journal
+
+This log details the raw, day-by-day process of executing the backup analysis project. It includes all failures, troubleshooting steps, and pivots, which informed the final conclusions in the main report.
+
+Week 1: Lab Construction
+
+Objective: Build the test environment.
+Host: Windows 11 Pro.
+Guest: Installed VirtualBox and created an Ubuntu 22.04 LTS and windows 11 virtual machine.
+
+Data: Created a 31MB standardized test dataset (Photos, Database, Documents) on both the Windows host and the Ubuntu VM.
+
+Verification: Generated ground_truth_checksums.txt files for both datasets using Get-FileHash and sha256sum.
+
+Status: Complete.
+
+Week 2: Baseline Backups (The "File History" Failure)
+
+Objective: Configure and test the default Windows 11 backup tool, "File History."
+
+Attempt 1: Used "File History" from Control Panel.
+
+Result: FAILURE. Backup size was 2MB. The tool only saved logs, not the data.
+
+Attempt 2 (Troubleshooting): Moved the project folder to the C:\Users\...\Documents library, as File History is hard-coded to scan libraries.
+
+Result: FAILURE. Backup size was still 2MB.
+
+Attempt 3 (Troubleshooting): Discovered the Documents library was on the "Exclude" list by default. Removed it from the list.
+
+Result: FAILURE. Backup size was still 2MB.
+
+Attempt 4 (Hard Reset): Performed a full reset by deleting the FileHistory folder on the external drive and deleting the local AppData\Microsoft\Windows\FileHistory configuration files. Restarted the service.
+
+Result: CRITICAL FAILURE. The tool was still non-functional and refused to scan the data.
+
+Conclusion: The modern "File History" tool was determined to be fundamentally unreliable and non-functional for this test.
+
+PIVOT: Decided to pivot the Windows tool to the older, more robust "Backup and Restore (Windows 7)" utility.
+
+Week 2 (Continued): Baseline Backups (Successful Tests)
+
+Objective: Get baseline metrics for the new toolset: "Backup and Restore (Windows 7)" vs. rsync.
+
+Windows Test:
+
+Configured "Backup and Restore" to back up only the project folder.
+
+Full Backup: 15 seconds. Size: 7.37 MB (Excellent compression).
+
+Incremental Backup: 24 seconds.
+
+Finding: The tool works but has extremely high overhead, taking longer to check for one new file than to run the entire first backup.
+
+Linux Test:
+
+Used rsync -av [source] [destination].
+
+Full Backup: 0.5 seconds. Size: 31 MB (1:1 copy, no compression).
+
+Incremental Backup: 0.5 seconds.
+
+Finding: rsync is exceptionally fast with near-zero overhead.
+
+Week 3: Recovery Scenarios
+
+Scenario 1: File Deletion
+
+Test: Deleted one folder and one file from both systems.
+
+Windows Restore: Used the "Restore my files" GUI.
+
+RTO: 60 seconds.
+
+RPO: Excellent. Checksums matched.
+
+Linux Restore: Used rsync to copy from backup to source.
+
+RTO: 0.5 seconds.
+
+RPO: Excellent. Checksums matched.
+
+Scenario 2: Data Corruption (The "File Lock" Failure)
+
+Test: Attempt to corrupt a .png file with a hex editor.
+
+Windows Corruption Attempt:
+
+HxD and Notepad both failed to save changes to the file.
+
+PowerShell Set-Content failed with "Access is denied."
+
+Administrator PowerShell Set-Content also failed with "Access is denied."
+
+Finding: The file was in a "locked" state, likely by OneDrive, preventing even an Administrator from modifying it. This is a critical finding on its own.
+
+Windows Restore Test:
+
+We simulated the restore anyway against this "corrupted" (locked) file.
+
+The restore GUI looked like it worked. It asked to "Replace" the file and showed a success message.
+
+Result: CRITICAL FAILURE. The Get-FileHash command proved the file on disk was still the locked, corrupted version. The restore failed silently because it also had its access denied.
+
+Linux Corruption & Restore Test:
+
+Used hexedit to corrupt the .png file. This worked instantly.
+
+Ran rsync. The tool automatically detected the hash mismatch.
+
+Result: SUCCESS. rsync overwrote the corrupted file with the clean backup.
+
+RTO: 0.5 seconds.
+
+RPO: Excellent. Checksums matched.
+
+Week 4: Cybersecurity Stress Test
+
+Scenario 1: Confidentiality (Stolen Drive)
+
+Windows Test: Double-clicked the .zip backup on the external drive.
+
+Result: CRITICAL FAILURE. The file is unencrypted, and all data was immediately readable.
+
+Linux Test: Navigated to the /home/terry/BACKUP folder.
+
+Result: CRITICAL FAILURE. The files are an unencrypted 1:1 copy and were immediately readable.
+
+Scenario 2: Availability (Ransomware)
+
+Test: Deleted both the original data folder AND the "online" backup folder (the plugged-in USB drive / the BACKUP folder).
+
+Windows Result: CATASTROPHIC FAILURE. The "Restore" button was grayed out. Total data loss.
+
+Linux Result: CATASTROPHIC FAILURE. The rsync command failed with "No such file or directory." Total data loss.
+
+Finding: Proved the 3-2-1 rule: an "online" backup is not a safe backup.

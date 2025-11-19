@@ -1,0 +1,33 @@
+# ---
+# SCRIPT 1: GENERATE GROUND-TRUTH CHECKSUMS
+# We used this to create our "ground-truth" file for RPO verification.
+# ---
+Get-ChildItem -Path "C:\Users\tkira\Documents\project sysadmin NAGGINDA" -Recurse -File -Exclude "ground_truth_checksums.txt" | Get-FileHash -Algorithm SHA256 | Out-File -FilePath "C:\Users\tkira\Documents\project sysadmin NAGGINDA\ground_truth_checksums.txt"
+
+
+# ---
+# SCRIPT 2: PROVING DATA CORRUPTION (THE "FILE LOCK" SAGA)
+# This sequence demonstrates the real-world file permission issues encountered.
+# ---
+
+# Step 1: Attempt to corrupt file as a normal user (failed)
+Set-Content -Path "C:\Users\tkira\Documents\project sysadmin NAGGINDA\Photos\Blue and Yellow Modern Upcoming Events Instagram Post (Flyer) (5).png" -Value "This file is now corrupted."
+# Result: Access is denied.
+
+# Step 2: Attempt to remove "Read-only" flag as Administrator (also failed)
+# (This proved the file was locked by a higher-priority process like OneDrive)
+Set-ItemProperty -Path "C:\Users\tkira\Documents\project sysadmin NAGGINDA\Photos\Blue and Yellow Modern Upcoming Events Instagram Post (Flyer) (5).png" -Name IsReadOnly -Value $false
+# Result: Access is denied.
+
+# Step 3: Successful corruption after running as Administrator and targeting a non-locked file
+# (This hash was used to prove the file was different from the original)
+Get-FileHash -Path "C:\Users\tkira\Documents\project sysadmin NAGGINDA\Photos\Blue and Yellow Modern Upcoming Events Instagram Post (Flyer) (5).png" -Algorithm SHA256
+# Result: E6617FF242EC7E883E1AB2C5C9A76FCA26DF36BB432C5720D1E988DB719B94EB
+
+# ---
+# SCRIPT 3: VERIFYING A RESTORE
+# We ran this *after* a restore operation to check the file's hash.
+# ---
+Get-FileHash -Path "C:\Users\tkira\Documents\project sysadmin NAGGINDA\Photos\Blue and Yellow Modern Upcoming Events Instagram Post (Flyer) (5).png" -Algorithm SHA256
+# Result (Deletion Test): FE4D89... (SUCCESS)
+# Result (Corruption Test): E6617F... (FAILURE - File was not restored)

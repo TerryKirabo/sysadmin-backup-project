@@ -215,11 +215,3 @@ This project demonstrated that:
 * Use encrypted drives for backup media.
 * Maintain at least one offline or immutable backup copy.
 
----
-
-If you'd like, I can also:
-
-* Add command examples
-* Add screenshots references
-* Include a “How to Reproduce This Experiment” section
-* Format this as a full formal academic report instead of a README

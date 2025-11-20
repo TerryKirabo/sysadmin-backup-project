@@ -28,7 +28,7 @@ rsync -av /home/terry/projectsysadminNAGGINDA/ /home/terry/BACKUP/
 
 # ---
 # SCRIPT 4: RESTORE FROM DELETION / CORRUPTION
-# This is the single command used to "heal" the source folder from the backup.
+# This is the single command used to heal the source folder from the backup.
 # It automatically detects missing OR changed files and copies the clean version.
 # ---
 rsync -av /home/terry/BACKUP/ /home/terry/projectsysadminNAGGINDA/
@@ -36,7 +36,7 @@ rsync -av /home/terry/BACKUP/ /home/terry/projectsysadminNAGGINDA/
 
 # ---
 # SCRIPT 5: VERIFYING A RESTORE
-# We ran this *after* a restore to check the file's hash.
+# We ran this after a restore to check the file's hash.
 # ---
 # sha256sum /home/terry/projectsysadminNAGGINDA/Photos/"Blue and Yellow Modern Upcoming Events Instagram Post (Flyer) (5).png"
 # Result (Both Tests): fe4d8905c74cc02738fee51fc0385ca71d5aa3d625dbe910d1f57ba52909c114 (SUCCESS)

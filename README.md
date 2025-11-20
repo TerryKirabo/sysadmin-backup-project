@@ -13,6 +13,12 @@ This project evaluates the practical reliability of native backup tools in Windo
 
 Rather than comparing full operating system images (which differ drastically in structure and size), the study focused on a controlled 31MB dataset designed to resemble a realistic user directory. The project emphasizes not just performance, but *truthfulness* of restores—whether the recovered data is actually correct, verifiable, and trustworthy.
 
+View:
+- sysadmin project.pdf to see some of the screenshots of the project as I was doing it.
+- Windows evidence scripts to see a list of scripts I used for windows vm.
+- Linux evidence scripts to see a list of scripts I used for Ubuntu vm
+- project overview summary for a quick look and understanding of what I did in the project.
+- Project log to see real time step by step what I was doing.
 ---
 
 ## Dataset and Integrity Baseline
@@ -214,4 +220,7 @@ This project demonstrated that:
 * Avoid relying solely on consumer-facing tools (e.g., File History).
 * Use encrypted drives for backup media.
 * Maintain at least one offline or immutable backup copy.
+
+References
+AI was used to help me make the tables in this read me file for organization as I was unsure how to do it
 

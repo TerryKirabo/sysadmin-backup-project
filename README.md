@@ -11,7 +11,9 @@
 
 This project evaluates the practical reliability of native backup tools in Windows 11 and Ubuntu 22.04. The goal was to measure how well each system performs during normal backups, recoveries, and failure scenarios, including deletion, corruption, and basic cybersecurity threats.
 
-Rather than comparing full operating system images (which differ drastically in structure and size), the study focused on a controlled 31MB dataset designed to resemble a realistic user directory. The project emphasizes not just performance, but *truthfulness* of restores—whether the recovered data is actually correct, verifiable, and trustworthy.
+Rather than comparing full operating system images (which differ drastically in structure and size), the study focused on a controlled 31MB dataset designed to resemble a realistic user directory. The project emphasizes not just performance, but truthfulness of restores—whether the recovered data is actually correct, verifiable, and trustworthy.
+
+This is important to help companies that are small to medium sized undertsand backups of data. I am using storage and file backups and some forensics to do the project. I chose this project because I was interested in the topic in class where we discussed things like rsync and safe backups. Solutions are all up to date.
 
 View:
 - sysadmin project.pdf to see some of the screenshots of the project as I was doing it.

@@ -222,5 +222,6 @@ This project demonstrated that:
 * Maintain at least one offline or immutable backup copy.
 
 References
-AI was used to help me make the tables in this read me file for organization as I was unsure how to do it
+
+AI was used to help me make the tables in this read me file for organization and to help with neat formatting as I was unsure how to do it.
 

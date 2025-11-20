@@ -1,0 +1,65 @@
+1. Project Overview
+
+This project performs a rigorous, comparative analysis of the default backup utilities in Windows 11 ("File History" and "Backup and Restore") and Ubuntu Linux 22.04 (rsync). Unlike standard speed tests, this study evaluates cyber resilience: the ability of a backup solution to survive accidental deletion, data corruption, and active cyberattacks like ransomware.
+
+The main objective is to determine if built-in operating system tools are sufficient for enterprise-grade data protection or if they create a false sense of security for system administrators.
+
+2. Project Relevance
+
+Why this matters:
+In cybersecurity, availability is a core pillar of the CIA triad (Confidentiality, Integrity, Availability). Ransomware attacks specifically target backup availability to force payment. Understanding the failure modes of default backup tools is critical for forensic recovery and disaster planning.
+
+Why I chose this topic:
+I selected this comparison because many small-to-medium businesses (SMBs) rely on default tools to save costs. I wanted to scientifically test if that reliance exposes them to catastrophic data loss.
+
+Skills & Knowledge Gained:
+
+Forensic Verification: Using cryptographic hashing (SHA256) to verify data integrity.
+
+Disaster Recovery Planning: Calculating Recovery Time Objectives (RTO) and Recovery Point Objectives (RPO).
+
+System Administration: Managing file permissions, overcoming Windows file locks, and scripting automation in Bash and PowerShell.
+
+3. Methodology
+
+The project utilized a controlled virtualization environment to ensure a fair comparison.
+
+Setup and Environment
+
+Host Machine: Windows 11 Pro
+
+Virtual Machine: Ubuntu 22.04 LTS running in VirtualBox (Target for Linux tests) and Windows 11 (Target for Windows tests).
+
+Storage: External USB Drive (Windows target) and isolated local directory (Linux target).
+
+The Workflow
+
+Standardization: A 31MB dataset (Photos, Docs, CSVs) was replicated on both systems.
+
+Baselining: "Ground truth" checksums were generated for all files.
+
+Stress Testing: Three scenarios were executed:
+
+Scenario A: Accidental Deletion.
+
+Scenario B: Data Corruption (Bit rot simulation via Hex Editor).
+
+Scenario C: Cyber Attack (Simulated Ransomware & Data Theft).
+
+
+4. Results
+
+The investigation revealed critical differences in how each OS handles data integrity and security. Results are explained in details in README file.
+
+
+5. Conclusion
+
+This project proves that default backup tools are insufficient for modern cyber resilience.
+
+While Linux's rsync provided superior speed and data integrity verification (self-healing corrupted files), both platforms failed to protect against ransomware and data theft in their default configurations. The silent failure of the Windows tool is a particularly dangerous risk for administrators.
+
+Next Steps & Recommendations:
+
+Enforce Encryption: All backups must be wrapped in drive-level encryption (BitLocker/LUKS).
+
+The 3-2-1 Rule: "Online" backups are vulnerable. Organizations must implement immutable or air-gapped (offline) backups to survive ransomware.
